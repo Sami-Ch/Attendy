@@ -1,7 +1,10 @@
-# Wellcome viewer   
+# Wellcome viewer to Attendy
 ## Technologies
 Attendance System (react.js , node.js , express.js, mongoose and mongodb)
 ## Installation
+    git clone https://github.com/Sami-Ch/Attendy
+    cd server
+    npm i
 ### Set .env file in server containing:
 
 DATABASE_STRING = "mongoDB"
@@ -18,9 +21,6 @@ ADMIN_EMAIL=example@mail.com
 
 ADMIN_PASS=password
 
-    git clone https://github.com/Sami-Ch/Attendy
-    cd server
-    npm i
 
 
 ## Contributing

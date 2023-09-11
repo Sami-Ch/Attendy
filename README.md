@@ -10,7 +10,7 @@ npm i
 npm start
 ```
 ### Set .env file in server containing:
-
+```
   DATABASE_STRING = "mongoDB"
 
   PORT= '4000'
@@ -24,7 +24,7 @@ npm start
   ADMIN_EMAIL=example@mail.com
 
   ADMIN_PASS=password
-
+```
 ### For client
 ```
 cd client

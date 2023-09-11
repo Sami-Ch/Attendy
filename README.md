@@ -9,20 +9,14 @@ cd server
 npm i
 npm start
 ```
-### Set .env file in server containing:
+### Create .env file in server containing:
 ```
   DATABASE_STRING = "mongoDB"
-
   PORT= '4000'
-
   SECRET_KEY='very secret key'
-
   MAIL_EMAIL=example@mail.com
-
   MAIL_PASSWORD=password
-
   ADMIN_EMAIL=example@mail.com
-
   ADMIN_PASS=password
 ```
 ### For client

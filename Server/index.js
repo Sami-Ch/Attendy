@@ -1,12 +1,13 @@
 // import libraries
 const mongoose = require("mongoose");
 const express = require("express");
-const cors = require("cors");
+const cors = require('cors');
 const bodyParser = require("body-parser");
 const dotenv = require("dotenv").config();
-const { job, autoUpdateAttendance } = require("./services/autoUpdateAtendance");
+const { job } = require("./services/autoUpdateAtendance");
 // import routes
-const studentRoutes = require("./Routes/studentRoute")
+const studentRoutes = require("./Routes/studentRoute");
+const adminRoutes = require('./Routes/adminRoute');
 
 const app = express();
 
@@ -28,12 +29,21 @@ const db = mongoose.connection;
 
 connectToDatabase();
 
+const corsOptions = {
+   origin: 'http://localhost:5173',
+   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+   credentials: true,
+   optionsSuccessStatus: 204,
+};
+
+
 // middleware
-app.use(cors());
+app.use(cors(corsOptions));
 app.use(bodyParser.json());
 
 //routes
 app.use("/", studentRoutes);
+app.use("/", adminRoutes);
 
 
 // scheduler

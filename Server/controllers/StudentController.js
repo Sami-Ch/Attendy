@@ -1,20 +1,18 @@
 const Student = require("../models/student.model");
-
 const bcrypt = require("bcryptjs");
-const otpGenerator = require("otp-generator");
 const fs = require('fs');
 const jwt = require("jsonwebtoken");
 const { error } = require("console");
 const sharp = require("sharp");
 const { attendanceStatusCal, calculateGrade } = require('../services/attendanceOperations');
-const { sendLeaveRequestEmail } = require('../services/mailAdmin')
+const { sendLeaveRequestEmail } = require('../services/mailAdmin');
 
 //* ---------------------------------------------------------create student 
 const createStudent = async (req, res) => {
    try {
       const student = await Student.findOne({ email: req.body.email.toLowerCase() });
 
-      const imageBinaryData = fs.readFileSync("./assets/profileReplacement.webP");         //  dummy profile replacement
+      const imagePath = "./assets/profileReplacement.webP";         //  dummy profile replacement
 
       if (!student) {
          const password = req.body.password;
@@ -26,24 +24,23 @@ const createStudent = async (req, res) => {
             email: req.body.email.toLowerCase(),
             password: hash,
             sex: req.body.sex,
-            profileImage: { imageData: imageBinaryData, __filename: `${req.body.firstName}'s profile` },
-            attendance: { status: 'absent' },
+            profileImage: { imageUrl: imagePath, __filename: 'defaultImage' }
          });
 
          return res.status(200).send({
             error: false,
-            student: newStudent,
+            student: newStudent._id,
          });
       } else {
          return res.status(404).json({
-            message: 'student already exists',
-            error: true
+            message: 'Email already exists',
+            error: false
          })
       }
    } catch (error) {
       console.error(error);
       return res.status(500).send({
-         message: `Internal server error: ${error}`,
+         message: `@createstudent: ${error}`,
          error: true,
       });
    }
@@ -72,6 +69,7 @@ const login = async (req, res) => {
 
       const tokenPayload = {
          _id: student._id,
+         password: student.password,
          firstName: student.firstName,
          lastName: student.lastName,
          email: student.email,
@@ -79,15 +77,18 @@ const login = async (req, res) => {
          profileImage: student.profileImage,
          grade: student.grade,
          attendance: student.attendance,
+         role: student.role,
       };
 
       const token = jwt.sign(tokenPayload, process.env.SECRET_KEY);
 
-      return res.status(200).json({ Status: "Logged IN", Token: token, error: false });
+      return res.status(200).json({
+         role: student.role, token: token, error: false
+      });
    } catch (error) {
       // console.error(error);
       return res.status(500).json({
-         message: `Internal server error: ${error}`,
+         message: `@Login: ${error}`,
          error: true,
       });
    }
@@ -96,7 +97,7 @@ const login = async (req, res) => {
 //* ------------------------------------------------------------get single student
 const getStudent = async (req, res) => {
    try {
-      const student = await Student.findOne({ email: req.body.email.toLowerCase() });
+      const student = await Student.findById(req.body._id);
 
       if (!student) {
          return res.status(404).json({
@@ -113,6 +114,7 @@ const getStudent = async (req, res) => {
          profileImage: student.profileImage,
          grade: student.grade,
          attendance: student.attendance,
+         role: student.role,
       };
       res.status(200).send({
          error: false,
@@ -121,107 +123,77 @@ const getStudent = async (req, res) => {
 
    } catch (error) {
       return res.status(500).json({
-         message: `Internal server error: ${error}`,
+         message: `@getStudent: ${error}`,
          error: true,
       });
    }
 }
 
-//* ------------------------------------------------------------get all students
-const getStudents = async (req, res) => {
-   try {
-      // Define the aggregation pipeline
-      const pipeline = [
-         {
-            $project: {
-               firstName: 1,
-               lastName: 1,
-               email: 1,
-               sex: 1,
-               grade: 1,
-               attendance: 1,
-               profileImage: 1,
-            }, $project: {
-               _id: 0,
-               password: 0,
-            },
-         },
-      ];
-      // Performing aggregation 
-      Student.aggregate(pipeline)
-         .then((students) => {
-            // console.log(students);
-            return res.status(200).json({
-               students: students,
-               error: false,
-            });
-         }).catch((error) => { throw new Error; });
-
-   } catch (error) {
-      return res.status(Error ? 404 : 500).json({
-         message: Error ? error : `Internal server error: ${error}`,
-         error: true,
-      });
-   }
-}
-
-//* ------------------------------------------------------------update student
+//* ------------------------------------------------------------update student profile image
 const updateProfile = async (req, res) => {
    try {
-      const inputBuffer = Buffer.from(req.body.imageData, 'base64');
-      const outputBuffer = await sharp(inputBuffer).webp().toBuffer();
-      const student = await Student.findOne({ email: req.body.email.toLowerCase() });
-
-      student.profileImage.imageData = outputBuffer;
-      student.profileImage.__filename = `${student.firstName}'s profile`;
+      //check file
+      if (!req.file) {
+         return res.status(400).json({
+            message: 'No file uploaded.',
+            error: true
+         });
+      }
+      // create and save file to student
+      const student = await Student.findById(req.body._id);
+      if (!student) {
+         return res.status(404).json({
+            message: 'Student not found.',
+            error: true
+         });
+      }
+      const file = {
+         __filename: `${student.firstName} profile`,
+         imageUrl: req.file.path
+      };
+      student.profileImage = file;
       await student.save();
 
-      return res.send({
-         imageData: outputBuffer,
-         error: false,
+      res.status(200).json({
+         imageUrl: student.profileImage.imagePath,
+         message: 'Profile updated successfully.',
+         error: false
       });
+
    } catch (error) {
       console.error('Error:', error);
-      res.status(500).send({
-         message: 'Image conversion failed',
-         error: true,
+      res.status(500).json({
+         message: `@updateProfile: ${error.message}`, // Use error.message to capture the error message
+         error: true
       });
    }
-}
+};
 
 //* ------------------------------------------------------------mark student attendance
 const markAttendance = async (req, res) => {
    try {
-
-      const newAttendance = req.body.attendance;
-      const currentDate = newAttendance.date ?
-         new Date(newAttendance.date).toDateString() : new Date().toDateString();
+      const newAttendance = {
+         status: 'present'
+      }
 
       const filter = { email: req.body.email.toLowerCase() };
       const student = await Student.findOne(filter);
-
-      const attendanceIndex = student.attendance.findIndex(
-         (en) => new Date(en.date).toDateString() === currentDate
+      const attendanceToday = student.attendance.find(
+         (entry) =>
+            new Date(entry.date).toDateString() === new Date().toDateString()
       );
-
-      if (attendanceIndex !== -1) {
-         student.attendance[attendanceIndex] = newAttendance;
-         await student.save();
-         return res.status(200).json({
-            student: student,
-            error: false,
-         });
-      } else {
+      if (!attendanceToday) {
          student.attendance.push(newAttendance);
          await student.save();
-         return res.status(200).json({
-            student: student.attendance,
-            error: false,
-         });
       }
+      return res.status(200).json({
+         student: student.attendance,
+         error: false,
+      });
+
    } catch (error) {
-      return res.status(error ? 404 : 500).json({
-         message: `Internal server error: ${error}`,
+      return res.status(500).json({
+         message: `@markAttendance: ${error}`,
          error: true,
       });
    }
@@ -279,7 +251,7 @@ const leaveRequest = async (req, res) => {
    } catch (err) {
       console.error('Error:', err);
       return res.status(500).json({
-         message: `Internal server error: ${err}`,
+         message: `@LeaveRequest: ${err}`,
          error: true,
       });
    }
@@ -290,11 +262,8 @@ module.exports = {
    createStudent,
    login,
    getStudent,
-   getStudents,
    markAttendance,
    leaveRequest,
    updateProfile,
 
 };
-
-

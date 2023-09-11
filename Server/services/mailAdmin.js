@@ -13,7 +13,7 @@ const sendLeaveRequestEmail = async (student, attendanceCount) => {
 
    const mailOptions = {
       from: process.env.MAIL_EMAIL,
-      to: "usamachaudhary12@gmail.com",
+      to: process.env.ADMIN_EMAIL,
       subject: "Leave Request",
       html: `
       <div class="container" style="max-width: 90%; margin: auto; padding-top: 10px">

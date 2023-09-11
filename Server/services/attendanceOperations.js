@@ -62,7 +62,7 @@ async function calculateGrade(studentId) {
    try {
       const attendanceStatuses = await attendanceStatusCal(studentId);
 
-      const presentStatus = attendanceStatuses.presents;
+      const presentStatus = attendanceStatuses.presents + attendanceStatuses.leave;
       const presentPercentage = (presentStatus ? presentStatus.total : 0) / attendanceStatuses.totalAttendance * 100;
 
       // Determine the grade based on the percentage

@@ -9,7 +9,7 @@ const studentSchema = new mongoose.Schema({
    grade: { type: String, enum: ["A", "B", "C", "D", "E", "F"], required: false },
    attendance: [{
       date: { type: Date, default: Date.now },
-      status: { type: String, enum: ["present", "absent", "leave"], default: "absent" },
+      status: { type: String, enum: ["present", "absent", "leave"], },
       leaveRequest: { type: String },
       count: {
          presents: { type: Number },
@@ -21,12 +21,13 @@ const studentSchema = new mongoose.Schema({
    sex: { type: String, enum: ["male", "female", "others"] },
    profileImage: {
       __filename: String,
-      imageData: Buffer,
+      imageUrl: String,
    },
+   role: { type: String, enum: ["student", "admin"], default: "student" }, // Add the "role" field
 }, { collection: "student" }
 );
 
 const Student = mongoose.model("User", studentSchema);
 
-//export student model
+// Export student model
 module.exports = Student;

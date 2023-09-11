@@ -2,6 +2,7 @@
 ## Technologies
 Attendance System (vite , react.js, tailwindCSS , node.js , express.js, mongoose and mongodb)
 ## Installation
+### For server
 ```
 git clone https://github.com/Sami-Ch/Attendy
 cd server

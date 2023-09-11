@@ -1,8 +1,17 @@
-# React + Vite
+  # Wellcome viewer 
+    # Seerver:
+To run app set .env variable in server containing:
+   DATABASE_STRING (MONGODB)
+   PORT
+   SECRET_KEY='very secret key'
+   MAIL_EMAIL
+   MAIL_PASSWORD
+   ADMIN_EMAIL
+   ADMIN_PASS
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+git clone https://github.com/Sami-Ch/Attendy/ 
+npm i in both 
 
-Currently, two official plugins are available:
+HAPPY CODDING 🤗
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+

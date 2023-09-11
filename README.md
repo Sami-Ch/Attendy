@@ -2,9 +2,12 @@
 ## Technologies
 Attendance System (vite , react.js, tailwindCSS , node.js , express.js, mongoose and mongodb)
 ## Installation
-    git clone https://github.com/Sami-Ch/Attendy
-    cd server
-    npm i
+```
+git clone https://github.com/Sami-Ch/Attendy
+cd server
+npm i
+npm start
+```
 ### Set .env file in server containing:
 
 DATABASE_STRING = "mongoDB"
@@ -24,6 +27,7 @@ ADMIN_PASS=password
 ```
 cd client
 npm i
+npm run dev
 ```
 
 ## Contributing

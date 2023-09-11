@@ -11,19 +11,19 @@ npm start
 ```
 ### Set .env file in server containing:
 
-DATABASE_STRING = "mongoDB"
+  DATABASE_STRING = "mongoDB"
 
-PORT= '4000'
+  PORT= '4000'
 
-SECRET_KEY='very secret key'
+  SECRET_KEY='very secret key'
 
-MAIL_EMAIL=example@mail.com
+  MAIL_EMAIL=example@mail.com
 
-MAIL_PASSWORD=password
+  MAIL_PASSWORD=password
 
-ADMIN_EMAIL=example@mail.com
+  ADMIN_EMAIL=example@mail.com
 
-ADMIN_PASS=password
+  ADMIN_PASS=password
 
 ### For client
 ```

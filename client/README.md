@@ -1,26 +1,20 @@
 # Wellcome viewer   
 ## Installation
+### Set .env file in server containing:
 
+DATABASE_STRING = "mongoDB"
 
-DATABASE_STRING (MONGODB)
-
-
-PORT
-
+PORT= '4000'
 
 SECRET_KEY='very secret key'
 
+MAIL_EMAIL=example@mail.com
 
-MAIL_EMAIL
+MAIL_PASSWORD=password
 
+ADMIN_EMAIL=example@mail.com
 
-MAIL_PASSWORD
-
-
-ADMIN_EMAIL
-
-
-ADMIN_PASS
+ADMIN_PASS=password
 
     git clone https://github.com/Sami-Ch/Attendy/
     cd clinet

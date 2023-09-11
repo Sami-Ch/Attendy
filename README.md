@@ -1,6 +1,6 @@
 # Wellcome viewer to Attendy
 ## Technologies
-Attendance System (react.js , node.js , express.js, mongoose and mongodb)
+Attendance System (vite , react.js, tailwindCSS , node.js , express.js, mongoose and mongodb)
 ## Installation
     git clone https://github.com/Sami-Ch/Attendy
     cd server
@@ -21,7 +21,10 @@ ADMIN_EMAIL=example@mail.com
 
 ADMIN_PASS=password
 
-
+```
+    cd client
+    npm i
+```
 
 ## Contributing
 

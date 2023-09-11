@@ -22,8 +22,8 @@ ADMIN_EMAIL=example@mail.com
 ADMIN_PASS=password
 
 ```
-    cd client
-    npm i
+cd client
+npm i
 ```
 
 ## Contributing

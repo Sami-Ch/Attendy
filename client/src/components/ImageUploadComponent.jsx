@@ -49,7 +49,7 @@ export default function ImageUploadComponent({ _id, getStudent }) {
             },
          });
 
-         getStudent();
+         await getStudent();
 
          setMessage('Image saved successfully. It may take time to render.');
          setError(response.data.error);

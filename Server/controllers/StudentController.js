@@ -251,7 +251,6 @@ const updateProfile = async (req, res) => {
 
       if (student.profileImage.imageUrl !== mainImagePath) {
          if (student.profileImage.imageUrl !== studentImagePath) {
-            console.log('log main a gya');
             fs.unlink(student.profileImage.imageUrl, (err) => {
                if (err) {
                   console.error('Error deleting student image file:', err);

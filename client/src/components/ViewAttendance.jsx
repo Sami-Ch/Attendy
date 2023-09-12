@@ -4,7 +4,7 @@ import IP from '../IP';
 import Cookies from 'js-cookie';
 import Loader from './Loader';
 
-export default function ViewAttendance({ userData }) {
+export default function ViewAttendance({ userData, getStudent }) {
    const [attendanceData, setAttendanceData] = useState([]);
    const [totals, setTotals] = useState({ totalAttendance: 0, presents: 0, absents: 0, leaves: 0 });
    const [isLoading, setIsLoading] = useState(true);

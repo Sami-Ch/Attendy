@@ -13,12 +13,12 @@ export default function Attendy() {
    let navigate = useNavigate();
 
    // Data states
-   const [userData, setUserData] = useState(null); // Initialize as null
+   const [userData, setUserData] = useState(null);
    const [image, setImage] = useState('');
 
    // Event states
    const [authorized, setAuthorized] = useState(true);
-   const [isLoading, setIsLoading] = useState(true); // Initialize as true
+   const [isLoading, setIsLoading] = useState(true);
 
    // Checking authorization of student
    const isAuthorized = () => {
@@ -27,7 +27,7 @@ export default function Attendy() {
       if (role === 'student') {
          setAuthorized(true);
       } else {
-         setAuthorized(false); // Set to false instead of null
+         setAuthorized(false);
          setTimeout(() => {
             navigate('/');
          }, 2000);
@@ -41,12 +41,13 @@ export default function Attendy() {
          const url = `${requestUrl}/${_id}`;
          try {
             const response = await axios.get(url);
+            console.log('getstudent in attendy');
             setUserData(response.data.student);
-            console.log(userData);
             setImage(`${IP.IP}${response.data.student.profileImage.imageUrl}`);
-            setIsLoading(false); // Set isLoading to false when userData is loaded
          } catch (error) {
             console.error('Error fetching student data:', error);
+         } finally {
+            setIsLoading(false);
          }
       }
    };
@@ -54,13 +55,7 @@ export default function Attendy() {
    useEffect(() => {
       isAuthorized();
       getStudent();
-   }, []);
-
-   useEffect(() => {
-      if (!isLoading) {
-         setUserData(userData);
-      }
-   }, [isLoading]);
+   }, []); // Run once when the component mounts
 
    return (
       <div>

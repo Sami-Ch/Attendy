@@ -7,8 +7,9 @@ export default function Logout() {
   let navigate = useNavigate('')
 
   const removeCookies = () => {
-    Cookies.remove('userRole');
+    Cookies.remove('role');
     Cookies.remove('token');
+    Cookies.remove('_id');
     navigate('/')
   };
 
@@ -20,7 +21,7 @@ export default function Logout() {
           onClick={removeCookies}
           className="relative rounded bg-primary px-1.5 py-1 text-sm font-medium text-white "
         >
-          Logout
+          LOGOUT
         </button>
       </TERipple>
     </div>

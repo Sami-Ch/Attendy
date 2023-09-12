@@ -4,10 +4,11 @@ import { useNavigate } from "react-router-dom";
 import DropdownMenu from '../components/DropdownComponent'
 import axios from "axios";
 import Loader from "../components/Loader";
+import IP from "../IP";
 
 
 export default function Register() {
-   const requestUrl = `http://localhost:4000/signup`;
+   const requestUrl = `${IP.IP}signup`;
    const navigate = useNavigate();
    // user data states
    const [password, setPassword] = useState("");
@@ -48,7 +49,7 @@ export default function Register() {
             lastName,
             email,
             password,
-            sex: gender,
+            sex: gender.toLowerCase(),
          };
 
          const res = await axios.post(requestUrl, studentData);
@@ -69,8 +70,8 @@ export default function Register() {
 
    //!  {======================= RENDER STARTS HERE =========================}
    return (
-      <section className="h-screen">
-         <div className=" flex max-w-lg dark:border-white-10 border-2 p-10 m-40 rounded-lg ">
+      <section className="flex h-screen items-center justify-center ">
+         <div className="block max-w-sm dark:border-white-10 border-2 p-20 rounded-lg">
             <form>
                <p className="my-4 font-semibold dark:text-white">Register</p>
                <div className="grid grid-cols-2 gap-1">
@@ -97,7 +98,7 @@ export default function Register() {
                   isOpen={isOpen}
                   toggleDropdown={toggleDropdown}
                   handleMenuItemClick={handleMenuItemClick}
-                  feilds={{ title: gender ? gender : 'Gender', option1: 'male', option2: 'female', option3: 'others' }}
+                  feilds={{ title: gender ? gender : 'Gender', option1: 'Male', option2: 'Female', option3: 'Others' }}
                />
 
                {/* Register button */}

@@ -2,8 +2,11 @@ const Student = require("../models/student.model");
 const bcrypt = require("bcryptjs");
 const fs = require('fs');
 const jwt = require("jsonwebtoken");
-const { error } = require("console");
+const { error, profile } = require("console");
 const sharp = require("sharp");
+const path = require('path');
+const sizeOf = require('image-size');
+
 const { attendanceStatusCal, calculateGrade } = require('../services/attendanceOperations');
 const { sendLeaveRequestEmail } = require('../services/mailAdmin');
 
@@ -12,7 +15,7 @@ const createStudent = async (req, res) => {
    try {
       const student = await Student.findOne({ email: req.body.email.toLowerCase() });
 
-      const imagePath = "./assets/profileReplacement.webP";         //  dummy profile replacement
+      const imagePath = "./uploads/profileReplacement.webP";         //  dummy profile replacement
 
       if (!student) {
          const password = req.body.password;
@@ -45,6 +48,48 @@ const createStudent = async (req, res) => {
       });
    }
 };
+
+//* ------------------------------------------------------------get count
+const getCount = async (req, res) => {
+   try {
+      const student = Student.findById(req.params._id);
+      if (student) {
+         const attendanceCount = await attendanceStatusCal(req.params._id)
+         res.status(200).json({
+            presents: attendanceCount.presents,
+            absents: attendanceCount.absents,
+            leaves: attendanceCount.leaves,
+            total: attendanceCount.totalAttendance,
+            error: false
+         })
+      }
+   } catch (error) {
+      return res.status(500).json({
+         message: `@getCount: ${error}`,
+         error: true,
+      });
+   }
+}
+
+//* ------------------------------------------------------------get grade
+const getGrade = async (req, res) => {
+   try {
+      const student = Student.findById(req.params._id);
+      if (student) {
+         const grade = await calculateGrade(req.params._id)
+
+         res.status(200).json({
+            grade: grade,
+            error: false
+         })
+      }
+   } catch (error) {
+      return res.status(500).json({
+         message: `@getCount: ${error}`,
+         error: true,
+      });
+   }
+}
 
 //* ------------------------------------------------------------login student
 const login = async (req, res) => {
@@ -83,7 +128,7 @@ const login = async (req, res) => {
       const token = jwt.sign(tokenPayload, process.env.SECRET_KEY);
 
       return res.status(200).json({
-         role: student.role, token: token, error: false
+         role: student.role, token: token, error: false, _id: student._id
       });
    } catch (error) {
       // console.error(error);
@@ -97,7 +142,7 @@ const login = async (req, res) => {
 //* ------------------------------------------------------------get single student
 const getStudent = async (req, res) => {
    try {
-      const student = await Student.findById(req.body._id);
+      const student = await Student.findById(req.params._id);
 
       if (!student) {
          return res.status(404).json({
@@ -105,7 +150,6 @@ const getStudent = async (req, res) => {
             error: true
          });
       };  // credential checks
-
       const studentData = {
          firstName: student.firstName,
          lastName: student.lastName,
@@ -132,14 +176,15 @@ const getStudent = async (req, res) => {
 //* ------------------------------------------------------------update student profile image
 const updateProfile = async (req, res) => {
    try {
-      //check file
+      // Check file
       if (!req.file) {
          return res.status(400).json({
             message: 'No file uploaded.',
             error: true
          });
       }
-      // create and save file to student
+
+      // Create and save file to student
       const student = await Student.findById(req.body._id);
       if (!student) {
          return res.status(404).json({
@@ -147,15 +192,87 @@ const updateProfile = async (req, res) => {
             error: true
          });
       }
-      const file = {
+
+      // Construct the absolute path by moving up one directory level
+      const absoluteImagePath = path.join(__dirname, '..', req.file.path);
+      const dimensions = sizeOf(absoluteImagePath);
+      let imageFormat = dimensions.type;
+
+      const filenameWithoutExtension = path.basename(absoluteImagePath, path.extname(absoluteImagePath));
+
+      let compressedImageBuffer;
+
+      if (imageFormat.toLowerCase() === 'jpeg' || imageFormat.toLowerCase() === 'jpg') {
+         imageFormat = 'jpeg'
+         compressedImageBuffer = await sharp(absoluteImagePath)
+            .resize({ width: 800 })
+            .rotate()
+            .jpeg({ quality: 50 })
+            .toBuffer();
+      } else if (imageFormat.toLowerCase() === 'png') {
+         compressedImageBuffer = await sharp(absoluteImagePath)
+            .resize({ width: 800 })
+            .rotate()
+            .png({ quality: 80 })
+            .toBuffer();
+      } else if (imageFormattoLowerCase() === 'gif') {
+         compressedImageBuffer = await sharp(absoluteImagePath)
+            .resize({ width: 800 })
+            .rotate()
+            .gif({ quality: 80 })
+            .toBuffer();
+      } else if (imageFormat.toLowerCase() === 'webp') {
+
+         compressedImageBuffer = await sharp(absoluteImagePath)
+            .resize({ width: 800 })
+            .rotate()
+            .webp({ quality: 50 })
+            .toBuffer();
+      } else {
+
+         // Handle other formats here or provide an error message
+         return res.status(400).json({
+            message: 'Unsupported image format.',
+            error: true
+         });
+      }
+
+      const mainImagePath = './uploads/profileReplacement.webP';
+      const studentImagePath = `uploads/${student._id}.${imageFormat}`;
+
+      if (!(req.file.path === mainImagePath)) {
+
+         fs.unlink(req.file.path, (err) => {
+            if (err) {
+               console.error('Error deleting main image file:', err);
+            }
+         });
+      }
+
+      if (student.profileImage.imageUrl !== mainImagePath) {
+         if (student.profileImage.imageUrl !== studentImagePath) {
+            console.log('log main a gya');
+            fs.unlink(student.profileImage.imageUrl, (err) => {
+               if (err) {
+                  console.error('Error deleting student image file:', err);
+               }
+            });
+         }
+      }
+      // Save the compressed image with the same filename and extension
+      const compressedImagePath = `${path.dirname(absoluteImagePath)}/${student._id}.${imageFormat}`;
+      fs.writeFileSync(compressedImagePath, compressedImageBuffer);
+
+      // Update the student's profile image with the compressed image path
+      student.profileImage = {
          __filename: `${student.firstName} profile`,
-         imageUrl: req.file.path
+         imageUrl: `uploads/${student._id}.${imageFormat}`
       };
-      student.profileImage = file;
+
       await student.save();
 
       res.status(200).json({
-         imageUrl: student.profileImage.imagePath,
+         imageUrl: student.profileImage.imageUrl,
          message: 'Profile updated successfully.',
          error: false
       });
@@ -163,7 +280,7 @@ const updateProfile = async (req, res) => {
    } catch (error) {
       console.error('Error:', error);
       res.status(500).json({
-         message: `@updateProfile: ${error.message}`, // Use error.message to capture the error message
+         message: `@updateProfile: ${error.message}`,
          error: true
       });
    }
@@ -176,14 +293,16 @@ const markAttendance = async (req, res) => {
          status: 'present'
       }
 
-      const filter = { email: req.body.email.toLowerCase() };
-      const student = await Student.findOne(filter);
-      const attendanceToday = student.attendance.find(
-         (entry) =>
-            new Date(entry.date).toDateString() === new Date().toDateString()
+      const student = await Student.findById(req.params._id);
+      const attendanceIndex = student.attendance.findIndex(
+         (en) =>
+            new Date(en.date).toDateString() === new Date().toDateString()
       );
-      if (!attendanceToday) {
+      if (!student.attendance[attendanceIndex]) {
          student.attendance.push(newAttendance);
+         await student.save();
+      } else if (!student.attendance[attendanceIndex].status) {
+         student.attendance[attendanceIndex] = newAttendance;
          await student.save();
       }
       return res.status(200).json({
@@ -192,6 +311,7 @@ const markAttendance = async (req, res) => {
       });
 
    } catch (error) {
+      console.log(error);
       return res.status(500).json({
          message: `@markAttendance: ${error}`,
          error: true,
@@ -202,9 +322,9 @@ const markAttendance = async (req, res) => {
 //* --------------------------------------------------------------------------request leave
 const leaveRequest = async (req, res) => {
    try {
-      const { email, leaveRequest } = req.body;
-      const filter = { email: email.toLowerCase() };
-      const student = await Student.findOne(filter);
+      const { _id, leaveRequest } = req.body;
+
+      const student = await Student.findById(_id);
 
       if (!student) {
          return res.status(404).json({
@@ -220,14 +340,13 @@ const leaveRequest = async (req, res) => {
 
       const newAttendance = {
          leaveRequest: leaveRequest,
-         count: {
-            presents: attendanceCount.presents,
-            absents: attendanceCount.absents,
-            leaves: attendanceCount.leaves,
-            total: attendanceCount.totalAttendance,
-         }
       }
-
+      const count = {
+         presents: attendanceCount.presents,
+         absents: attendanceCount.absents,
+         leaves: attendanceCount.leaves,
+         total: attendanceCount.totalAttendance,
+      }
       const attendanceIndex = student.attendance.findIndex(
          (en) => new Date(en.date).toDateString() === currentDate
       );
@@ -239,9 +358,9 @@ const leaveRequest = async (req, res) => {
       }
 
       await student.save();
-
+      // console.log(student);
       // Send mail to admin
-      await sendLeaveRequestEmail(student, attendanceCount)
+      await sendLeaveRequestEmail(student, attendanceCount, leaveRequest)
 
       return res.status(200).json({
          message: "Leave Request generated",
@@ -265,5 +384,7 @@ module.exports = {
    markAttendance,
    leaveRequest,
    updateProfile,
+   getCount,
+   getGrade,
 
 };

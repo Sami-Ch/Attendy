@@ -25,7 +25,7 @@ function DropdownMenu({ isOpen, toggleDropdown, handleMenuItemClick, feilds }) {
          <button
             onClick={toggleDropdown}
             className="flex items-center rounded bg-primary pl-1 py-1 text-sm font-medium text-white"
-            style={{ width: "5rem" }} // Adjust the width as needed
+            style={{ width: "5rem" }}
          >
             <span className="flex-grow">{feilds.title}</span>
             <div className="pl-3">
@@ -53,21 +53,21 @@ function DropdownMenu({ isOpen, toggleDropdown, handleMenuItemClick, feilds }) {
                >
                   <a
 
-                     onClick={() => { handleMenuItemClick(feilds.option1); }} // Prevent page reload on click
+                     onClick={() => { handleMenuItemClick(feilds.option1); }}
                      className={optionStyle}
                   >
                      {feilds.option1}
                   </a>
                   <a
 
-                     onClick={() => { handleMenuItemClick(feilds.option2); }} // Prevent page reload on click
+                     onClick={() => { handleMenuItemClick(feilds.option2); }}
                      className={optionStyle}
                   >
                      {feilds.option2}
                   </a>
                   <a
 
-                     onClick={() => { handleMenuItemClick(feilds.option3); }} // Prevent page reload on click
+                     onClick={() => { handleMenuItemClick(feilds.option3); }}
                      className={optionStyle}
                   >
                      {feilds.option3}

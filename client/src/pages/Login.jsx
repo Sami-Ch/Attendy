@@ -4,10 +4,11 @@ import { Link, useNavigate } from "react-router-dom";
 import Loader from "../components/Loader"
 import axios from 'axios';
 import Cookies from 'js-cookie'
+import IP from "../IP";
 
 
 export default function Login() {
-   const requestUrl = `http://localhost:4000/login`;
+   const requestUrl = `${IP.IP}login`;
    let navigate = useNavigate();
    // user data states
    const [password, setPassword] = useState("");
@@ -27,7 +28,7 @@ export default function Login() {
             password: password,
          });
 
-         const { role, token, error } = response.data;
+         const { _id, role, token, error } = response.data;
 
          if (!error) {
 
@@ -36,8 +37,10 @@ export default function Login() {
                sameSite: 'strict',
                expires: 1,
                path: '/',
+               httpOnly: true,
             });
-            Cookies.set('role', role, { expires: 1 })
+            Cookies.set('role', role, { expires: 7 });
+            Cookies.set('_id', _id, { expires: 7 })
 
 
             if (role === 'student') {
@@ -58,8 +61,9 @@ export default function Login() {
    //!  {======================= RENDER STARTS HERE =========================}
    return (
       <section className="h-screen">
-         <div className=" h-full">
-            <div className=" flex max-w-sm dark:border-white-10 border-2 p-20 m-40 rounded-lg ">
+         <div className="flex h-full items-center justify-center">
+            <div className="flex max-w-sm dark:border-white-10 border-2 p-20  rounded-lg">
+
 
                {/* Right column container */}
                <div className="mb-12">

@@ -44,9 +44,9 @@ const attendanceStatusCal = async (_id) => {
             },
          },
       ];
-
-      const result = await Student.aggregate(pipeline).exec();
+      let result = await Student.aggregate(pipeline).exec();
       if (result.length > 0) {
+         result[0].totalAttendance -= 0
          return result[0];
       } else {
          return { present: 0, absent: 0, leave: 0 };
@@ -78,9 +78,9 @@ async function calculateGrade(studentId) {
       } else {
          grade = 'F';
       }
-      console.log('====================================');
-      console.log(attendanceStatuses);
-      console.log('====================================');
+
+      // console.log(attendanceStatuses);
+
 
       return grade;
    } catch (error) {

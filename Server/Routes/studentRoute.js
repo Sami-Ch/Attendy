@@ -13,11 +13,17 @@ router.post('/signup', checkAdmin, studentConroller.createStudent);
 // login 
 router.post('/login', studentConroller.login);
 
+// getCount 
+router.get('/getcount/:_id', studentConroller.getCount);
+
+// getGrade 
+router.get('/getgrade/:_id', studentConroller.getGrade);
+
 // get single student
-router.get('/getstudent', studentConroller.getStudent);
+router.get('/getstudent/:_id', studentConroller.getStudent);
 
 // mark attendance
-router.put('/markAttendance', studentConroller.markAttendance);
+router.get('/markattendance/:_id', studentConroller.markAttendance);
 
 // update profile picture
 router.post('/updateprofile', upload.single('file'), studentConroller.updateProfile);

@@ -11,12 +11,6 @@ const studentSchema = new mongoose.Schema({
       date: { type: Date, default: Date.now },
       status: { type: String, enum: ["present", "absent", "leave"], },
       leaveRequest: { type: String },
-      count: {
-         presents: { type: Number },
-         absents: { type: Number },
-         leaves: { type: Number },
-         total: { type: Number },
-      },
    }],
    sex: { type: String, enum: ["male", "female", "others"] },
    profileImage: {

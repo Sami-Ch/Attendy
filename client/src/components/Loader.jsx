@@ -3,7 +3,7 @@ import React from "react";
 const Loader = () => {
    return (
       <div
-         className=" mt-10 inline-block h-4 w-4 animate-[spinner-grow_0.75s_linear_infinite] rounded-full bg-current align-[-0.125em] opacity-0 motion-reduce:animate-[spinner-grow_1.5s_linear_infinite]"
+         className=" mt-10 inline-block h-6 w-6 animate-[spinner-grow_0.75s_linear_infinite] rounded-full bg-current align-[-0.125em] opacity-0 motion-reduce:animate-[spinner-grow_1.5s_linear_infinite]"
          role="status"
       >
          <span

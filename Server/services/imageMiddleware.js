@@ -6,7 +6,7 @@ const storage = multer.diskStorage({
       cb(null, 'uploads/');
    },
    filename: (req, file, cb) => {
-      cb(null, `${req.body._id.toString()}'s profile.webP`);
+      cb(null, file.originalname);
    },
 });
 

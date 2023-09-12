@@ -4,7 +4,8 @@ const express = require("express");
 const cors = require('cors');
 const bodyParser = require("body-parser");
 const dotenv = require("dotenv").config();
-const { job } = require("./services/autoUpdateAtendance");
+const { job, autoUpdateAttendance } = require("./services/autoUpdateAtendance");
+const path = require('path')
 // import routes
 const studentRoutes = require("./Routes/studentRoute");
 const adminRoutes = require('./Routes/adminRoute');
@@ -38,14 +39,15 @@ const corsOptions = {
 
 
 // middleware
-app.use(cors(corsOptions));
+app.use(cors());
 app.use(bodyParser.json());
 
 //routes
 app.use("/", studentRoutes);
 app.use("/", adminRoutes);
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-
+// autoUpdateAttendance()
 // scheduler
 job.start();
 

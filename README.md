@@ -1,4 +1,4 @@
-# Wellcome viewer to Attendy
+ # Wellcome viewer to Attendy
 ## Technologies
 Attendance System (vite , react.js, tailwindCSS , node.js , express.js, mongoose and mongodb)
 ## Installation
@@ -19,6 +19,9 @@ npm start
   ADMIN_EMAIL=example@mail.com
   ADMIN_PASS=password
 ```
+adminemail is the mail you want access admin page
+mail email is where you wnat updates form the students to come to
+
 ### For client
 ```
 cd client

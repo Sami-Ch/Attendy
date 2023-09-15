@@ -19,7 +19,8 @@ npm start
   ADMIN_EMAIL=example@mail.com
   ADMIN_PASS=password
 ```
-adminemail is the mail you want access admin page
+adminemail is the mail you want access admin page with
+
 mail email is where you wnat updates form the students to come to
 
 ### For client

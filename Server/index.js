@@ -47,8 +47,7 @@ app.use("/", studentRoutes);
 app.use("/", adminRoutes);
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// autoUpdateAttendance()
-// scheduler
+
 job.start();
 
 // run app

@@ -29,19 +29,24 @@ export default function Login() {
          });
 
          const { _id, role, token, error } = response.data;
-
          if (!error) {
+
+            const expirationDate = new Date();
+            expirationDate.setDate(expirationDate.getDate() + 1);
 
             Cookies.set('token', token, {
                secure: true,
-               sameSite: 'strict',
-               expires: 1,
-               path: '/',
-               httpOnly: true,
+               sameSite: 'Lax', // or remove this line
+               expires: expirationDate,
+               path: '/'
             });
-            Cookies.set('role', role, { expires: 7 });
-            Cookies.set('_id', _id, { expires: 7 })
 
+            Cookies.set('role', role, { expires: 7 });
+            Cookies.set('_id', _id, { expires: 7 });
+
+            console.log('====================================');
+            console.log(Cookies.get('token'));
+            console.log('====================================');
 
             if (role === 'student') {
                navigate('/Attendy');
@@ -52,7 +57,7 @@ export default function Login() {
             setError('Incorrect email or password');
          }
       } catch (error) {
-         console.log(error)
+         //console.log(error)
          setError('An error occurred. Please try again later.');
       } finally {
          setLoading(false);
@@ -62,7 +67,7 @@ export default function Login() {
    return (
       <section className="h-screen">
          <div className="flex h-full items-center justify-center">
-            <div className="flex max-w-sm dark:border-white-10 border-2 p-20  rounded-lg">
+            <div className="flex max-w-sm dark:border-white-10 border-2 p-20  items-center rounded-lg">
 
 
                {/* Right column container */}

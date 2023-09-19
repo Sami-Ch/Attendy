@@ -17,6 +17,11 @@ const studentSchema = new mongoose.Schema({
       __filename: String,
       imageUrl: String,
    },
+   attendanceCount: {
+      presents: { type: Number, default: 0 },
+      absents: { type: Number, default: 0 },
+      leaves: { type: Number, default: 0 },
+   },
    role: { type: String, enum: ["student", "admin"], default: "student" }, // Add the "role" field
 }, { collection: "student" }
 );

@@ -310,7 +310,7 @@ const markAttendance = async (req, res) => {
       });
 
    } catch (error) {
-      console.log(error);
+      //console.log(error);
       return res.status(500).json({
          message: `@markAttendance: ${error}`,
          error: true,
@@ -357,7 +357,7 @@ const leaveRequest = async (req, res) => {
       }
 
       await student.save();
-      // console.log(student);
+      // //console.log(student);
       // Send mail to admin
       await sendLeaveRequestEmail(student, attendanceCount, leaveRequest)
 

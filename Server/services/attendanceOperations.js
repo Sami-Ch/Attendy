@@ -6,6 +6,13 @@ const attendanceStatusCal = async (_id) => {
    const studentId = _id;
 
    try {
+      // Fetch the student document once
+      const student = await Student.findById(studentId);
+
+      if (!student) {
+         throw new Error('Student not found');
+      }
+
       // Define the aggregation pipeline to sum attendance statuses
       const pipeline = [
          {
@@ -44,26 +51,36 @@ const attendanceStatusCal = async (_id) => {
             },
          },
       ];
+
       let result = await Student.aggregate(pipeline).exec();
+
       if (result.length > 0) {
-         result[0].totalAttendance -= 0
-         return result[0];
+         result[0].totalAttendance -= 0;
+         const count = result[0];
+
+         student.attendanceCount.presents = count.presents;
+         student.attendanceCount.absents = count.absents;
+         student.attendanceCount.leaves = count.leaves;
+
+         // Use await when saving the student document
+         await student.save();
+
+         return count;
       } else {
-         return { present: 0, absent: 0, leave: 0 };
+         return { presents: 0, absents: 0, leaves: 0 };
       }
    } catch (error) {
       console.error('Error:', error);
       throw error;
    }
-}
+};
 
 //*--------------------------------------------------------------------------------------calculate grade
-async function calculateGrade(studentId) {
+const calculateGrade = async (studentId) => {
    try {
-      const attendanceStatuses = await attendanceStatusCal(studentId);
-
-      const presentStatus = attendanceStatuses.presents + attendanceStatuses.leave;
-      const presentPercentage = (presentStatus ? presentStatus.total : 0) / attendanceStatuses.totalAttendance * 100;
+      const count = await attendanceStatusCal(studentId);
+      const presentStatus = count.presents + count.leaves;
+      const presentPercentage = (presentStatus ? presentStatus : 0) / count.totalAttendance * 100;
 
       // Determine the grade based on the percentage
       let grade;
@@ -79,17 +96,25 @@ async function calculateGrade(studentId) {
          grade = 'F';
       }
 
-      // console.log(attendanceStatuses);
+      const user = await Student.findById(studentId);
 
+      if (!user) {
+         throw new Error('User not found');
+      }
+
+      user.grade = grade;
+
+      // Use await when saving the user document
+      await user.save();
 
       return grade;
    } catch (error) {
       console.error('Error:', error);
       throw error; // Propagate the error
    }
-}
+};
 
 module.exports = {
    attendanceStatusCal,
    calculateGrade,
-}
+};

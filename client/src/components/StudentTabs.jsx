@@ -15,10 +15,10 @@ import Cookies from "js-cookie";
 import Loader from "./Loader";
 
 export default function StudentTabs({ userData, getStudent }) {
-   const [justifyActive, setJustifyActive] = useState("tab2");
+   const [justifyActive, setJustifyActive] = useState("View Attendance");
    const [message, setMessage] = useState('');
    const [attendanceDisabled, setAttendanceDisabled] = useState(false);
-   const [loading, setLoading] = useState(true); // Add loading state
+   const [loading, setLoading] = useState(true);
    const url = IP.IP;
    const textareaRef = useRef(null);
 
@@ -32,7 +32,6 @@ export default function StudentTabs({ userData, getStudent }) {
       if (!attendanceDisabled) {
          try {
             await axios.get(`${url}markattendance/${Cookies.get('_id')}`);
-            console.log('Attendance marked successfully.');
             setAttendanceDisabled(true); // Disable attendance after marking
             setMessage("Attendance marked successfully. Hooray!");
             setTimeout(() => setMessage(''), 2000); // Clear message after 2 seconds
@@ -46,9 +45,8 @@ export default function StudentTabs({ userData, getStudent }) {
 
    const findMatchingAttendanceIndex = async () => {
       try {
-         await getStudent();
-         setLoading(false); // Stop loading
-         console.log('getstudent in student');
+         await getStudent(userData);
+         setLoading(false);
 
          const currentDate = new Date();
          const currentYear = currentDate.getFullYear();
@@ -68,7 +66,6 @@ export default function StudentTabs({ userData, getStudent }) {
                currentDay === attendanceDay
             );
          });
-
          if (matchingIndex === -1) {
             setAttendanceDisabled(false); // Enable attendance if not found
          } else {
@@ -80,12 +77,11 @@ export default function StudentTabs({ userData, getStudent }) {
    };
 
    const sendLeaveRequest = async () => {
+      const textareaValue = textareaRef.current.value;
       setLoading(true); // Start loading
 
       await findMatchingAttendanceIndex(); // Check before sending leave request
       if (!attendanceDisabled) {
-         const textareaValue = textareaRef.current.value;
-         console.log('Textarea Value:', textareaValue);
          const requestUrl = `${url}leaverequest`;
          const requestBody = {
             _id: Cookies.get('_id'),
@@ -93,16 +89,15 @@ export default function StudentTabs({ userData, getStudent }) {
          };
          try {
             await axios.post(requestUrl, requestBody);
-            console.log('Leave request sent successfully.');
+            setAttendanceDisabled(true)
             setMessage("Leave request sent successfully. Enjoy your break!");
-            setTimeout(() => setMessage(''), 2000); // Clear message after 2 seconds
+            setTimeout(() => setMessage(''), 1000); // Clear message after 2 seconds
          } catch (error) {
             console.error('Error sending leave request:', error);
             setMessage("Oops! Failed to send leave request.");
-            setTimeout(() => setMessage(''), 2000); // Clear message after 2 seconds
+            setTimeout(() => setMessage(''), 1000); // Clear message after 2 seconds
          }
       }
-
    };
 
    const handleJustifyClick = (value) => {
@@ -113,26 +108,26 @@ export default function StudentTabs({ userData, getStudent }) {
    };
 
    return (
-      <div >
+      <div>
          <TETabs justify>
             <TETabsItem
                className="py-3"
-               onClick={() => handleJustifyClick("tab1")}
-               active={justifyActive === "tab1"}
+               onClick={() => handleJustifyClick("Mark Attendance")}
+               active={justifyActive === "Mark Attendance"}
             >
                Mark Attendance
             </TETabsItem>
             <TETabsItem
                className="py-3"
-               onClick={() => handleJustifyClick("tab2")}
-               active={justifyActive === "tab2"}
+               onClick={() => handleJustifyClick("View Attendance")}
+               active={justifyActive === "View Attendance"}
             >
                View Attendance
             </TETabsItem>
             <TETabsItem
                className="py-3"
-               onClick={() => handleJustifyClick("tab3")}
-               active={justifyActive === "tab3"}
+               onClick={() => handleJustifyClick("Leave Request")}
+               active={justifyActive === "Leave Request"}
             >
                Leave Request
             </TETabsItem>
@@ -143,24 +138,21 @@ export default function StudentTabs({ userData, getStudent }) {
             </div>
          ) : (
             <TETabsContent>
-               <TETabsPane show={justifyActive === "tab1"}>
-                  <section className=" my-40">
+               <TETabsPane show={justifyActive === "Mark Attendance"}>
+                  <section className="my-40">
                      <div className="grid grid-cols-3">
-
-                        <div className="col-span-1 flex justify-center  items-center">
+                        <div className="col-span-1 flex justify-center items-center">
                            <TERipple rippleColor="light">
                               <button
                                  type="submit"
                                  onClick={markPresent}
                                  disabled={attendanceDisabled || loading} // Disable if attendanceDisabled or loading
-                                 className={attendanceDisabled ? 'bg-red-500 rounded px-1.5 py-1 text-sm font-medium text-white' : ' bg-success  rounded px-1.5 py-1 text-sm font-medium text-white'}
+                                 className={attendanceDisabled ? 'bg-red-500 rounded px-1.5 py-1 text-sm font-medium text-white' : 'bg-success rounded px-1.5 py-1 text-sm font-medium text-white'}
                               >
                                  {attendanceDisabled ? 'MARKED' : 'PRESENT'}
                               </button>
                            </TERipple>
-
                         </div>
-
                         {/* Empty second column */}
                         <div className="col-span-1"></div>
                         {/* Empty third column */}
@@ -170,49 +162,56 @@ export default function StudentTabs({ userData, getStudent }) {
                   {message && <div>{message}</div>}
                </TETabsPane>
 
-               <TETabsPane show={justifyActive === "tab2"}>
-                  <section >
-                     <div className=" ml-4 col-span-1 justify-center flex-row items-center">
-                        <ViewAttendance userData={userData} getStudent={getStudent} />
+               <TETabsPane show={justifyActive === "View Attendance"}>
+                  <section>
+                     <div className="ml-4 col-span-1 justify-center flex-row items-center">
+                        <ViewAttendance userData={userData} />
                      </div>
                   </section>
-                  <section>
-
-                  </section>
+                  <section></section>
                </TETabsPane>
-
-               <TETabsPane show={justifyActive === "tab3"}>
-                  <section >
+               {/* leave request starts here */}
+               <TETabsPane show={justifyActive === "Leave Request"}>
+                  <section>
                      <div className="grid grid-cols-3">
                         <div className="col-span-1"></div>
                         {/* Empty first column */}
                         <div className="col-span-1"></div>
                         {/* Empty second column */}
-
                         <div className="grid grid-rows-1 justify-center items-center">
                            <TECollapse show={!attendanceDisabled}>
-                              <div className="relative" data-te-input-wrapper-init>
+                              <div className="relative">
                                  <label className="my-3 text-red-500">
                                     Admin Alert: Tread Lightly! 😉
                                  </label>
                                  <textarea
-                                    ref={textareaRef} // Reference to the textarea element
+                                    ref={textareaRef}
                                     className="peer flex flex-row h-[15rem] w-[20rem] rounded border-2 bg-transparent px-3 py-[0.32rem] leading-[1.6] outline-none transition-all duration-200 ease-linear text-sm"
                                     rows="4"
                                     placeholder="Write Your reason"
                                  ></textarea>
                               </div>
+                              <TERipple rippleColor="light" className="my-3">
+                                 <button
+                                    type="submit"
+                                    className={attendanceDisabled ? 'bg-red-500 rounded my-40 px-1.5 py-1 text-sm font-medium text-white' : 'bg-success rounded px-1.5 text-sm font-medium text-white'}
+                                    disabled={attendanceDisabled || loading} // Disable if attendanceDisabled or loading
+                                    onClick={sendLeaveRequest} // Add the click event handler
+                                 >
+                                    REQUEST LEAVE
+                                 </button>
+                              </TERipple>
                            </TECollapse>
-                           <TERipple rippleColor="light" className="my-3">
+                           {attendanceDisabled && <TERipple rippleColor="light" className="my-3">
                               <button
                                  type="submit"
                                  className={attendanceDisabled ? 'bg-red-500 rounded my-40 px-1.5 py-1 text-sm font-medium text-white' : 'bg-success rounded px-1.5 text-sm font-medium text-white'}
                                  disabled={attendanceDisabled || loading} // Disable if attendanceDisabled or loading
                                  onClick={sendLeaveRequest} // Add the click event handler
                               >
-                                 {attendanceDisabled ? 'MARKED' : 'REQUEST LEAVE'}
+                                 MARKED
                               </button>
-                           </TERipple>
+                           </TERipple>}
                         </div>
                      </div>
                   </section>
@@ -220,10 +219,6 @@ export default function StudentTabs({ userData, getStudent }) {
                </TETabsPane>
             </TETabsContent>
          )}
-         <div className={justifyActive === 'tab3' ? '-mt-[0rem]' : (justifyActive === 'tab2' ? 'mt-[0px]' : 'mt-[0px]')}>
-            <Logout />
-         </div>
-
       </div>
    );
 }

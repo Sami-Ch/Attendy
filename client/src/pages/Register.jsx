@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { TEInput, TERipple } from "tw-elements-react";
 import { useNavigate } from "react-router-dom";
-import DropdownMenu from '../components/DropdownComponent'
+import DropDownComponent from '../components/DropDownComponent'
 import axios from "axios";
 import Loader from "../components/Loader";
 import IP from "../IP";
@@ -19,17 +19,9 @@ export default function Register() {
    // event states
    const [loading, setLoading] = useState(false);
    const [error, setError] = useState("");
-   const [isOpen, setIsOpen] = useState(false);
 
-   const handleMenuItemClick = (e) => {
-      event.preventDefault();
+   const saveVal = (e) => {
       setGender(e);
-      setIsOpen(!isOpen);
-   };
-
-   const toggleDropdown = () => {
-      event.preventDefault();
-      setIsOpen(!isOpen);
    };
 
 
@@ -58,7 +50,7 @@ export default function Register() {
             navigate("/");
          }
       } catch (err) {
-         console.log('error:  ', err.response.data.message);
+         //console.log('error:  ', err.response.data.message);
          !err.response.data.error
             ? setError(err.response.data.message)
             : setError("Network problem");
@@ -74,6 +66,7 @@ export default function Register() {
          <div className="block max-w-sm dark:border-white-10 border-2 p-20 rounded-lg">
             <form>
                <p className="my-4 font-semibold dark:text-white">Register</p>
+               {/* Name input */}
                <div className="grid grid-cols-2 gap-1">
                   <TEInput type="text" label="First Name" size="sm"
                      value={firstName} onChange={(e) => { setFirstName(e.target.value); setError(null); }}
@@ -94,11 +87,10 @@ export default function Register() {
                />
 
                {/* Gender dropdown */}
-               <DropdownMenu
-                  isOpen={isOpen}
-                  toggleDropdown={toggleDropdown}
-                  handleMenuItemClick={handleMenuItemClick}
-                  feilds={{ title: gender ? gender : 'Gender', option1: 'Male', option2: 'Female', option3: 'Others' }}
+               <DropDownComponent
+                  saveVal={saveVal}
+                  fields={{ title: gender ? gender : 'Gender', option1: 'Male', option2: 'Female', option3: 'Others' }}
+                  from="RR"
                />
 
                {/* Register button */}

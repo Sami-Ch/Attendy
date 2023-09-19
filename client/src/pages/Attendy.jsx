@@ -3,10 +3,10 @@ import { useNavigate } from "react-router-dom";
 import ImageUploadComponent from "../components/ImageUploadComponent";
 import Cookies from 'js-cookie';
 import Loader from "../components/Loader";
-import Logout from "../components/Logout";
 import axios from "axios";
 import IP from "../IP";
 import StudentTabs from "../components/StudentTabs";
+import Logout from "../components/Logout";
 
 export default function Attendy() {
    const requestUrl = `${IP.IP}getstudent`;
@@ -41,7 +41,7 @@ export default function Attendy() {
          const url = `${requestUrl}/${_id}`;
          try {
             const response = await axios.get(url);
-            console.log('getstudent in attendy');
+            //console.log('getstudent in attendy');
             setUserData(response.data.student);
             setImage(`${IP.IP}${response.data.student.profileImage.imageUrl}`);
          } catch (error) {
@@ -63,7 +63,11 @@ export default function Attendy() {
             <Loader />
          ) : authorized ? (
             <section className="h-full mt-3">
-               <h2 className=" dark:text-white text-lg mb-2">Welcome {userData.firstName} {userData.lastName}</h2>
+               <div className=" w-[10rem]">
+                  <div className=" ">
+                     <div className=" -mt-3 -mb-0"><Logout /> </div>  {/* Move Logout component here */}
+                  </div>
+               </div>
                <span className="flex h-full items-center justify-center">
                   <img
                      src={image}
@@ -77,13 +81,14 @@ export default function Attendy() {
                   image={image}
                   getStudent={getStudent}
                />
+               <p>{userData.firstName}</p>
                <div className="border-t border-primary-600 mt-2"></div>
                <StudentTabs userData={userData} getStudent={getStudent} />
             </section>
          ) : (
             <>
                <div className="grid grid-rows-2 gap-3 my-20 px-6 py-5 text-base text-danger-700" role="alert">
-                  😓 Redirecting to login page
+                  😓 Redirecting to the login page
                </div>
                <Loader />
             </>

@@ -51,8 +51,8 @@ export default function ViewAttendance({ userData }) {
             <td className="px-4 py-2 text-white border-r font-medium ">Total</td>
             <td className="px-4 py-2 text-white ">{totals.presents ? totals.presents : 0}</td>
             <td className="px-4 py-2 text-white ">{totals.absents ? totals.absents : 0}</td>
-            <td className="px-4 py-2 text-white">{totals.leaves ? totals.leave : 0}</td>
-            <td className="px-4 py-2 border-2 bg-amber-300 border-red-800  text-slate-700 ">Total: {totals.leaves + totals.presents + totals.absents}</td>
+            <td className="px-4 py-2 text-white ">{totals.leaves ? totals.leave : 0}</td>
+            <td className="px-4 py-2 border-2 bg-amber-300 border-red-800 text-slate-700 ">Total: {totals.leaves + totals.presents + totals.absents}</td>
          </tr>
       );
    }

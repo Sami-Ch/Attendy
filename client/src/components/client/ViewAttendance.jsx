@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import IP from '../IP';
+import IP from '../../IP';
 import Cookies from 'js-cookie';
-import Loader from './Loader';
+import Loader from '../genral/Loader';
 
 export default function ViewAttendance({ userData }) {
    const [attendanceData, setAttendanceData] = useState([]);
@@ -36,10 +36,10 @@ export default function ViewAttendance({ userData }) {
                {entry.status === 'leave' ? 'Leave' : ''}
             </td>
             <td
-               className={`px-4 py-2 ${entry.leaveRequest ? ' bg-zinc-200 text-black' : ''
+               className={`px-4 py-2 ${entry.leaveRequest ? ' font-semibold bg-zinc-200 text-primary-700' : ''
                   } dark:border-neutral-500 boarder-l-2`}
             >
-               {entry.leaveRequest ? 'Leave Request' : ''}
+               {entry.leaveRequest ? 'Pending' : ''}
             </td>
          </tr>
       ));
@@ -86,7 +86,7 @@ export default function ViewAttendance({ userData }) {
                   </div>
                ) : (
                   <div className="overflow-y-auto max-h-96">
-                     <table className="min-w-full  text-center text-sm ">
+                     <table className="min-w-full  text-center text-sm  shadow-inner shadow-neutral-900">
                         <thead className="border-b font-medium ">
                            <tr>
                               <th scope="col" className=" px-6 py-4">

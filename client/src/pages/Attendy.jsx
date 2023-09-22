@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import ImageUploadComponent from "../components/ImageUploadComponent";
+import ImageUploadComponent from "../components/client/ImageUploadComponent";
 import Cookies from 'js-cookie';
-import Loader from "../components/Loader";
+import Loader from "../components/genral/Loader";
 import axios from "axios";
 import IP from "../IP";
-import StudentTabs from "../components/StudentTabs";
-import Logout from "../components/Logout";
+import StudentTabs from "../components/client/StudentTabs";
+import Logout from "../components/genral/Logout";
 
 export default function Attendy() {
    const requestUrl = `${IP.IP}getstudent`;

@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import ImageUploadComponent from "../components/ImageUploadComponent";
 import {
    TETabs,
    TETabsContent,
@@ -8,14 +7,14 @@ import {
    TETabsPane,
 } from "tw-elements-react";
 import Cookies from 'js-cookie';
-import Loader from "../components/Loader";
-import Logout from "../components/Logout";
+import Loader from "../components/genral/Loader";
+import Logout from "../components/genral/Logout";
 import axios from "axios";
 import IP from "../IP";
-import StudentTabs from "../components/StudentTabs";
-import StudentRecords from "../components/StudentRecords";
-import RequestModue from "../components/requestModule";
-import AttendanceForm from "../components/AttendanceForm";
+import StudentTabs from "../components/client/StudentTabs";
+import StudentRecords from "../components/admin/StudentRecords";
+import RequestModue from "../components/admin/requestModule";
+import AttendanceForm from "../components/admin/AttendanceForm";
 
 
 export default function AdminDashboard() {
@@ -83,10 +82,9 @@ export default function AdminDashboard() {
    return (
       <section className="h-screen">
          <div className="flex h-full">
-            <div className="flex w-40 h-full bg-black items-start">
+            <div className="flex w-40 h-full z-50  bg-black items-start">
                <TETabs vertical>
-                  <p className=" w-40 pt-3 h-12  bg-slate-500">Dashboard</p>
-                  <div className=" border-t-2 mb-2 border-primary-600 items-center"></div>
+                  <p className=" z-50 w-40 pt-3 h-12  bg-slate-500  border-b-2 mb-2 border-primary-600">Dashboard</p>
                   <TETabsItem
                      className="py-3 my-2"
                      onClick={() => handleVerticalClick("Student Records")}
@@ -115,10 +113,9 @@ export default function AdminDashboard() {
                </TETabs>
             </div>
             <div className="w-screen mx-auto">
-               <div className="bg-slate-500 border-l-2 border-primary-600 pt-3 pl-10 w-full h-12 min-w-full font-bold text-left">
+               <div className="bg-slate-500 border-l-2 z-50 border-b-2  border-primary-600 pt-3 pl-10  h-12 min-w-full font-bold text-left">
                   {verticalActive}
                </div>
-               <div className="-mr-4 border-t-2 border-primary-600"></div>
                <div className="flex items-center justify-center">
                   <TETabsContent>
                      <TETabsPane show={verticalActive === "Student Records"}>

@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { TEInput, TERipple } from "tw-elements-react";
 import { useNavigate } from "react-router-dom";
-import DropDownComponent from '../components/DropDownComponent'
+import DropDownComponent from '../components/genral/DropDownComponent'
 import axios from "axios";
-import Loader from "../components/Loader";
+import Loader from "../components/genral/Loader";
 import IP from "../IP";
 
 

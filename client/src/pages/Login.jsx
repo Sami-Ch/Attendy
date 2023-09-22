@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { TEInput, TERipple } from "tw-elements-react";
 import { Link, useNavigate } from "react-router-dom";
-import Loader from "../components/Loader"
+import Loader from "../components/genral/Loader"
 import axios from 'axios';
 import Cookies from 'js-cookie'
 import IP from "../IP";
@@ -43,10 +43,6 @@ export default function Login() {
 
             Cookies.set('role', role, { expires: 7 });
             Cookies.set('_id', _id, { expires: 7 });
-
-            console.log('====================================');
-            console.log(Cookies.get('token'));
-            console.log('====================================');
 
             if (role === 'student') {
                navigate('/Attendy');

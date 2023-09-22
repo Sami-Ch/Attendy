@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import DropDownComponent from './DropdownComponent';
+import DropDownComponent from '../genral/DropdownComponent';
 import { TERipple } from 'tw-elements-react';
-import IP from '../IP';
+import IP from '../../IP';
 import axios from 'axios';
 import Cookies from 'js-cookie';
 
@@ -74,8 +74,8 @@ export default function RequestModule({ studentsData, getStudents }) {
          student.attendance &&
          student.attendance.some(
             (attendance) =>
-               new Date(attendance.date).toDateString() === new Date().toDateString() &&
-               attendance.leaveRequest !== undefined
+               attendance.date &&
+               attendance.status === undefined
          )
       );
    };
@@ -86,20 +86,20 @@ export default function RequestModule({ studentsData, getStudents }) {
    }, [studentsData.students]);
 
    const renderAttendance = (attendances, student) => {
-      const currentDate = new Date().toDateString();
-      const todayAttendance = attendances.find(
+      const selectedAttendance = attendances.find(
          (attendance) =>
-            new Date(attendance.date).toDateString() === currentDate &&
-            attendance.leaveRequest !== undefined
+            attendance.date &&
+            attendance.status === undefined
       );
 
-      if (todayAttendance) {
+      if (selectedAttendance) {
          return (
-            <div className='flex flex-row'>
-               <div className="px-3 py-2 border-r">
-                  <p>Date: {new Date(todayAttendance.date).toLocaleDateString()}</p>
-               </div>
-               <div className="px-3 py-2 border-r">
+
+            <>
+               <td className="px-3 py-2 border-r">
+                  <p>Date: {new Date(selectedAttendance.date).toLocaleDateString()}</p>
+               </td>
+               <td className="px-3 py-2 ">
                   <DropDownComponent
                      saveVal={saveVal}
                      fields={{
@@ -111,12 +111,12 @@ export default function RequestModule({ studentsData, getStudents }) {
                      from="RQ"
                      studentData={{
                         student: student,
-                        date: todayAttendance.date,
+                        date: selectedAttendance.date,
                      }}
                      style={{ zIndex: 9999 }} // Set a higher z-index value
                   />
-               </div>
-            </div>
+               </td>
+            </>
          );
       }
    };
@@ -130,23 +130,23 @@ export default function RequestModule({ studentsData, getStudents }) {
                   key={student._id}
                   className="border-b transition duration-300 ease-in-out"
                >
-                  <td className="px-3 py-2 border">
+                  <td className="px-3 py-2 border-r">
                      {`${student.firstName} ${student.lastName}`}
                   </td>
-                  <td className="px-3 py-2 border">{student.email}</td>
-                  <td>
-                     {renderAttendance(student.attendance, student)}
-                  </td>
+                  <td className="px-3 py-2 border-r">{student.email}</td>
+
+                  {renderAttendance(student.attendance, student)}
+
                </tr>
             );
          });
    };
 
    return (
-      <div className="flex flex-col">
+      <div className="flex flex-col ">
          {hasTodayAttendance ? (
-            <div className="overflow-x-auto sm:-mx-6 lg:-mx-8">
-               <table className="min-w-full text-left text-md font-light">
+            <div className="overflow-x-auto sm:-mx-6 lg:-mx-8  ">
+               <table className="min-w-full  text-md font-light">
                   <thead className="border-b font-medium">
                      <tr>
                         <th scope="col" className="px-3 py-2">
@@ -156,9 +156,10 @@ export default function RequestModule({ studentsData, getStudents }) {
                            email
                         </th>
                         <th className="px-3 py-2">Date</th>
+                        <th className="px-3 py-2">update</th>
                      </tr>
                   </thead>
-                  <tbody>{renderStudent()}</tbody>
+                  <tbody className=' shadow-inner shadow-neutral-900'>{renderStudent()}</tbody>
                </table>
             </div>
          ) : (
@@ -184,7 +185,7 @@ export default function RequestModule({ studentsData, getStudents }) {
                <button
                   type="button"
                   onClick={handleSaveAttendance}
-                  className="relative rounded mt-2 bg-primary px-1.5 py-1 text-sm font-medium text-white"
+                  className="relative rounded mt-2 mx-auto bg-primary px-1.5 py-1 text-sm font-medium text-white"
                >
                   SAVE
                </button>

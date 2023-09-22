@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import IP from '../IP';
+import IP from '../../IP';
 import Cookies from 'js-cookie';
-import Loader from './Loader';
+import Loader from "../genral/Loader";
 
 export default function ViewAttendance({ userData }) {
    const [attendanceData, setAttendanceData] = useState([]);

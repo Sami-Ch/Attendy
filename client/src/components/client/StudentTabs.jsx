@@ -7,12 +7,12 @@ import {
    TERipple,
    TECollapse
 } from "tw-elements-react";
-import ViewAttendance from "./ViewAttendance";
-import Logout from "./Logout";
+import ViewAttendance from "../client/ViewAttendance";
+import Logout from "../genral/Logout";
 import axios from "axios";
-import IP from "../IP";
+import IP from "../../IP";
 import Cookies from "js-cookie";
-import Loader from "./Loader";
+import Loader from "../genral/Loader";
 
 export default function StudentTabs({ userData, getStudent }) {
    const [justifyActive, setJustifyActive] = useState("View Attendance");

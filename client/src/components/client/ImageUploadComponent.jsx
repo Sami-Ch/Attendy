@@ -1,7 +1,7 @@
 import React, { useRef, useState, useEffect } from 'react';
 import axios from 'axios';
-import IP from '../IP';
-import Loader from './Loader';
+import IP from '../../IP';
+import Loader from '../genral/Loader';
 
 
 export default function ImageUploadComponent({ _id, getStudent }) {
